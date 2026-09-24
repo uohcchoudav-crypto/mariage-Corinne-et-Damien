@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mariage - Damien & Corinne</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Cinzel:wght@400;600&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Bloquer totalement le défilement de la page */
+        html, body {
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Montserrat', sans-serif;
+            background-color: #fdfbf7;
+            color: #4a4a4a;
+        }
+
+        /* --- SECTION COUVERTURE FIGÉE --- */
+        .cover {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)), 
+                        url('https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+            padding: 20px;
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.05);
+        }
+
+        .cover-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            border: 1px solid #e0d6c8;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 35px;
+        }
+
+        @media (max-width: 768px) {
+            .cover-card {
+                flex-direction: column;
+                padding: 20px;
+                gap: 20px;
+            }
+        }
+
+        .photo-box {
+            flex: 1;
+            max-width: 380px;
+            width: 100%;
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid #e0d6c8;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+        }
+
+        .photo-box img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            display: block;
+            object-fit: cover;
+        }
+
+        .details-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .names {
+            font-family: 'Cinzel', serif;
+            font-size: 1.9rem;
+            color: #2c2c2c;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .ampersand {
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.8rem;
+            color: #c5a059;
+            margin: 10px 0;
+            display: block;
+        }
+
+        .date {
+            font-family: 'Great Vibes', cursive;
+            font-size: 1.8rem;
+            color: #7a6b58;
+            margin-top: 20px;
+        }
+
+        .date-digits {
+            font-family: 'Cinzel', serif;
+            font-size: 1rem;
+            letter-spacing: 3px;
+            color: #c5a059;
+            margin-top: 5px;
+        }
+
+        .bride-groom-icon {
+            margin: 15px auto 5px;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .bride-groom-icon svg {
+            width: 100%;
+            height: 100%;
+            fill: #c5a059;
+        }
+
+        /* --- BOUTONS SUR LA COUVERTURE --- */
+        .cover-actions {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .btn-action {
+            font-size: 0.85rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #555;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 12px 20px;
+            border-radius: 30px;
+            border: 1px solid #d4c4b0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .btn-action:hover {
+            transform: translateY(-3px);
+            background-color: #c5a059;
+            color: #fff;
+            border-color: #c5a059;
+        }
+
+        .btn-warning {
+            color: #b03a2e;
+            border-color: #e6b0aa;
+            background-color: #fadbd8;
+        }
+
+        .btn-warning:hover {
+            background-color: #c0392b;
+            color: #fff;
+            border-color: #c0392b;
+        }
+
+        /* --- FENÊTRES MODALES (CONTENUS CACHÉS) --- */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto; /* Seule la fenêtre ouverte peut être défilée */
+            padding: 40px 20px;
+        }
+
+        .modal-content {
+            background-color: #fdfbf7;
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 40px;
+            border-radius: 15px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Bouton de fermeture (Croix) */
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 30px;
+            font-weight: bold;
+            color: #888;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: #000;
+        }
+
+        .gallery-title {
+            text-align: center;
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .media-card {
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .media-card img, 
+        .media-card video {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .media-caption {
+            padding: 12px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .montage-video-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .montage-video-container video {
+            width: 100%;
+            max-height: 450px;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- COUVERTURE FIXE -->
+    <header class="cover">
+        <div class="cover-card">
+            
+            <div class="photo-box">
+                <img src="photodesmariés.jpg" alt="Faire-part de mariage">
+            </div>
+
+            <div class="details-box">
+                <h1 class="names">Damien LIAIGRE</h1>
+                <span class="ampersand">&amp;</span>
+                <h1 class="names">Corinne HIDIER</h1>
+
+                <div class="bride-groom-icon">
+                    <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="24" cy="14" r="6"/>
+                        <path d="M16 48 h16 v-18 h4 l-4 -12 h-12 l-4 12 h4 z"/>
+                        <circle cx="40" cy="16" r="5.5"/>
+                        <path d="M32 48 l5 -20 h6 l5 20 z"/>
+                        <path d="M26 48 c0 -15 20 -15 20 0 z" fill="#d4af37" opacity="0.3"/>
+                        <path d="M32 8 C30 4 24 4 24 8 C24 12 32 16 32 16 C32 16 40 12 40 8 C40 4 34 4 32 8 Z" fill="#e74c3c"/>
+                    </svg>
+                </div>
+
+                <p class="date">Le samedi 12 septembre 2026</p>
+                <p class="date-digits">12.09.2026</p>
+            </div>
+
+        </div>
+
+        <!-- 3 BOUTONS D'ACTION -->
+        <div class="cover-actions">
+            <button class="btn-action" onclick="openModal('modal-photos')">Voir les photos</button>
+            <button class="btn-action" onclick="openModal('modal-montage')">🎬 Montage photo</button>
+            <button class="btn-action btn-warning" onclick="openModal('modal-sensible')">⚠️ Âmes sensibles s'abstenir</button>
+        </div>
+    </header>
+
+    <!-- FENÊTRE 1 : PHOTOS -->
+    <div id="modal-photos" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('modal-photos')">&times;</span>
+            <h2 class="gallery-title">Album Souvenir</h2>
+            <div class="gallery-grid">
+                <div class="media-card">
+                    <img src="photo1.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo2.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo3.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo4.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo5.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo6.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo7.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo8.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo9.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo10.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo11.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo12.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo13.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+
+ <div class="media-card">
+                    <img src="photo14.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo15.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo16.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo17.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo18.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo19.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+
+ <div class="media-card">
+                    <img src="photo20.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo21.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo22.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo23.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo24.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo25.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo27.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo28.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo29.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo30.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo31.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo32.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo33.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo34.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo35.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo36.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo37.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo38.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo39.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo40.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo41.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo42.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo43.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo44.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo45.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo46.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo47.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo48.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo49.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo50.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo51.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo52.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo53.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo54.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo55.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo56.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div> 
+ <div class="media-card">
+                    <img src="photo57.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo58.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo59.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo60.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo61.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo62.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo63.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo64.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo65.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+
+<div class="media-card">
+                    <img src="photo66.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+ <div class="media-card">
+                    <img src="photo67.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+
+                <div class="media-card">
+                    <img src="photo68.jpg" alt="Les Mariés">
+                    <div class="media-caption">Damien &amp; Corinne</div>
+                </div>
+                <div class="media-card">
+                    <img src="photo69.jpg" alt="Vin d'honneur">
+                    <div class="media-caption"></div>
+                </div>
+                <div class="media-card">
+                    <img src="photo70.jpg" alt="Pièce montée">
+                    <div class="media-caption"></div>
+                </div>
+<div class="media-card">
+                    <img src="photo67.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo67.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo68.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo69.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo70.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo71.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo72.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo73.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo74.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo75.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo76.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo77.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo78.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo79.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo80.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo81.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo82.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo83.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo84.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo85.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo86.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo87.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo88.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo89.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo91.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo92.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo93.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo94.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo95.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo96.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo97.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo98.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo99.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo100.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo101.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+<img src="photo102.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+<img src="photo103.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+<img src="photo104.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+<img src="photo105.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+<img src="photo106.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+<img src="photo107.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo108.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo109.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo110.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo111.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo112.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo113.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo114.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+<div class="media-card">
+                    <img src="photo115.jpg" alt="Cérémonie">
+                    <div class="media-caption">La Cérémonie</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FENÊTRE 2 : MONTAGE PHOTO -->
+    <div id="modal-montage" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('modal-montage')">&times;</span>
+            <h2 class="gallery-title">🎬 Rétrospective &amp; Montage Vidéo</h2>
+            <div class="montage-video-container media-card">
+                <video controls poster="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=600&q=80">
+                    <source src="montage_photo.mp4" type="video/mp4">
+                    Votre navigateur ne supporte pas la vidéo.
+                </video>
+                <div class="media-caption">Film souvenir du mariage</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FENÊTRE 3 : ÂMES SENSIBLES -->
+    <div id="modal-sensible" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal('modal-sensible')">&times;</span>
+            <h2 class="gallery-title" style="color: #b03a2e;">⚠️ Zone réservée - Âmes sensibles s'abstenir</h2>
+            <div class="gallery-grid">
+                <div class="media-card">
+                    <video controls>
+                        <source src="video_dossier1.mp4" type="video/mp4">
+                        Votre navigateur ne supporte pas la vidéo.
+                    </video>
+<video controls>
+                        <source src="video_dossier2.mp4" type="video/mp4">
+                        Votre navigateur ne supporte pas la vidéo.
+                    </video>
+                    <div class="media-caption">Chorégraphie surprise</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT POUR OUVRIR / FERMER LES FENÊTRES -->
+    <script>
+        function openModal(id) {
+            document.getElementById(id).style.display = "block";
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = "none";
+            // Stoppe la vidéo si elle était en cours de lecture
+            var modal = document.getElementById(id);
+            var videos = modal.getElementsByTagName('video');
+            for(var i=0; i<videos.length; i++){
+                videos[i].pause();
+            }
+        }
+
+        // Ferme la fenêtre si l'utilisateur clique en dehors de la carte
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = "none";
+                var videos = event.target.getElementsByTagName('video');
+                for(var i=0; i<videos.length; i++){
+                    videos[i].pause();
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>
